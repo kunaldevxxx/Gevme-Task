@@ -51,11 +51,3 @@ This project consists of an interactive HTML form with client-side validation an
 ## Responsive Design
 
 The layout adjusts for different screen sizes, ensuring a good user experience on both desktop and mobile devices.
-
-## Future Improvements
-
-- Add server-side validation and form submission
-- Implement sorting and filtering for the car table
-- Add more interactive elements and animations
-
-Feel free to modify and expand upon this project as needed!
