@@ -14,6 +14,7 @@ This project consists of an interactive HTML form with client-side validation an
    - Displays information about various car models
    - Includes details such as manufacturer, model, year, performance metrics, fuel economy, and price
    - Responsive design for various screen sizes
+   - Searching And Sorting In Table
 
 3. **Styling**
    - Gradient background
