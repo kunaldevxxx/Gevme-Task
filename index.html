@@ -129,6 +129,34 @@
                 font-size: 0.9rem;
             }
         }
+
+        #searchInput {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 15px;
+            border: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+            font-size: 1rem;
+        }
+
+        #searchInput::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .highlight {
+            background-color: rgba(255, 255, 0, 0.3);
+        }
+
+        .sort-btn {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .sort-btn:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -157,31 +185,24 @@
         </div>
 
         <div class="table-container">
-            <table>
+            <input type="text" id="searchInput" placeholder="Search the table...">
+            <table id="carTable">
                 <thead>
                     <tr>
-                        <th>Manufacturer</th>
-                        <th>Model</th>
-                        <th>Year</th>
-                        <th colspan="3">Performance</th>
-                        <th colspan="2">Fuel Economy</th>
-                        <th>Price (USD)</th>
-                    </tr>
-                    <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th>Horsepower</th>
-                        <th>0-60 mph (s)</th>
-                        <th>Top Speed (mph)</th>
-                        <th>City (mpg)</th>
-                        <th>Highway (mpg)</th>
-                        <th></th>
+                        <th class="sort-btn" data-column="0">Manufacturer</th>
+                        <th class="sort-btn" data-column="1">Model</th>
+                        <th class="sort-btn" data-column="2">Year</th>
+                        <th class="sort-btn" data-column="3">Horsepower</th>
+                        <th class="sort-btn" data-column="4">0-60 mph (s)</th>
+                        <th class="sort-btn" data-column="5">Top Speed (mph)</th>
+                        <th class="sort-btn" data-column="6">City (mpg)</th>
+                        <th class="sort-btn" data-column="7">Highway (mpg)</th>
+                        <th class="sort-btn" data-column="8">Price (USD)</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td rowspan="3">Toyota</td>
+                        <td>Toyota</td>
                         <td>Camry</td>
                         <td>2023</td>
                         <td>203</td>
@@ -192,6 +213,7 @@
                         <td>26,420</td>
                     </tr>
                     <tr>
+                        <td>Toyota</td>
                         <td>Corolla</td>
                         <td>2023</td>
                         <td>169</td>
@@ -202,6 +224,7 @@
                         <td>21,550</td>
                     </tr>
                     <tr>
+                        <td>Toyota</td>
                         <td>RAV4</td>
                         <td>2023</td>
                         <td>203</td>
@@ -212,7 +235,7 @@
                         <td>27,575</td>
                     </tr>
                     <tr>
-                        <td rowspan="3">Honda</td>
+                        <td>Honda</td>
                         <td>Civic</td>
                         <td>2023</td>
                         <td>158</td>
@@ -223,6 +246,7 @@
                         <td>23,950</td>
                     </tr>
                     <tr>
+                        <td>Honda</td>
                         <td>Accord</td>
                         <td>2023</td>
                         <td>192</td>
@@ -233,6 +257,7 @@
                         <td>27,615</td>
                     </tr>
                     <tr>
+                        <td>Honda</td>
                         <td>CR-V</td>
                         <td>2023</td>
                         <td>190</td>
@@ -243,7 +268,7 @@
                         <td>31,610</td>
                     </tr>
                     <tr>
-                        <td rowspan="3">Ford</td>
+                        <td>Ford</td>
                         <td>Mustang</td>
                         <td>2023</td>
                         <td>310</td>
@@ -254,6 +279,7 @@
                         <td>27,470</td>
                     </tr>
                     <tr>
+                        <td>Ford</td>
                         <td>F-150</td>
                         <td>2023</td>
                         <td>290</td>
@@ -264,6 +290,7 @@
                         <td>34,585</td>
                     </tr>
                     <tr>
+                        <td>Ford</td>
                         <td>Explorer</td>
                         <td>2023</td>
                         <td>300</td>
@@ -279,6 +306,49 @@
     </div>
 
     <script src="/script.js"></script>
-   
+    <script>
+        // Search functionality
+        const searchInput = document.getElementById('searchInput');
+        const table = document.getElementById('carTable');
+        const rows = table.getElementsByTagName('tr');
+
+        searchInput.addEventListener('keyup', function() {
+            const searchTerm = this.value.toLowerCase();
+            
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const cells = row.getElementsByTagName('td');
+                let found = false;
+
+                for (let j = 0; j < cells.length; j++) {
+                    const cell = cells[j];
+                    if (cell.innerHTML.toLowerCase().indexOf(searchTerm) > -1) {
+                        found = true;
+                        cell.innerHTML = cell.innerHTML.replace(/<span class="highlight">(.*?)<\/span>/gi, '$1');
+                        cell.innerHTML = cell.innerHTML.replace(new RegExp(searchTerm, 'gi'), match => `<span class="highlight">${match}</span>`);
+                    } else {
+                        cell.innerHTML = cell.innerHTML.replace(/<span class="highlight">(.*?)<\/span>/gi, '$1');
+                    }
+                }
+
+                row.style.display = found ? '' : 'none';
+            }
+        });
+
+        // Sorting functionality
+        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+        const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+        document.querySelectorAll('th.sort-btn').forEach(th => th.addEventListener('click', (() => {
+            const table = th.closest('table');
+            const tbody = table.querySelector('tbody');
+            Array.from(tbody.querySelectorAll('tr'))
+                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
+                .forEach(tr => tbody.appendChild(tr) );
+        })));
+    </script>
 </body>
 </html>
